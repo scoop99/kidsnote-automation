@@ -17,6 +17,9 @@ logs/
 *.test.js
 test_results/
 
+# Planning Documents
+PLAN-*.md
+
 # Editor Files
 .vscode/
 .idea/
