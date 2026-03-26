@@ -19,6 +19,7 @@ test_results/
 
 # Planning Documents
 PLAN-*.md
+[관리자_전용_가이드].md
 
 # Editor Files
 .vscode/
