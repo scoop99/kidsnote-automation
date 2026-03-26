@@ -1,0 +1,23 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Private Configuration & Sessions
+system/config.json
+system/session.json
+system/logs/
+downloads/
+logs/
+
+# Test Files
+*.test.js
+test_results/
+
+# Editor Files
+.vscode/
+.idea/
+*.swp
