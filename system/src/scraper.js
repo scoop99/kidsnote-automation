@@ -17,13 +17,13 @@ class KidsNoteScraper {
 
   async init(headless = true) {
     this.browser = await chromium.launch({ headless, slowMo: 100 });
-    
+
     let storageState = null;
     if (fs.existsSync(SESSION_FILE)) {
-      try { storageState = await fs.readJson(SESSION_FILE); } catch (e) {}
+      try { storageState = await fs.readJson(SESSION_FILE); } catch (e) { }
     }
 
-    this.context = await this.browser.newContext({ 
+    this.context = await this.browser.newContext({
       storageState,
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     });
@@ -51,7 +51,7 @@ class KidsNoteScraper {
             const count = json.count || (json.results?.length || 0) || (json.activities?.length || 0) || (json.notices?.length || 0);
             if (count > 0) { /* silence working api log */ }
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     });
   }
@@ -73,6 +73,7 @@ class KidsNoteScraper {
     notify('로그인 필요', '최초 1회 수동 로그인이 필요합니다. 브라우저 창에서 로그인해 주세요.', 'warn');
     await this.close();
     await this.init(false);
+    console.log('\n[AUTH] 브라우저 창이 열렸습니다. 키즈노트 로그인을 완료해 주세요...');
     await this.page.goto('https://www.kidsnote.com/login/');
     let loginDetected = false;
     while (!loginDetected) {

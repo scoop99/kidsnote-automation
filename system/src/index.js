@@ -8,6 +8,30 @@ const { fmtElapsed, sanitizeSegment } = require('./utils');
 
 // system 폴더 내 위치
 const CONFIG_FILE = path.join(__dirname, '../config.json');
+const LOCK_FILE = path.join(__dirname, '../.lock');
+
+async function checkLock() {
+  if (await fs.pathExists(LOCK_FILE)) {
+    const stats = await fs.stat(LOCK_FILE);
+    // 1시간 이상 된 락 파일은 무시 (비정상 종료 대비)
+    if (Date.now() - stats.mtimeMs < 3600000) {
+      throw new Error('프로그램이 이미 실행 중입니다. (중복 실행 방지)');
+    }
+    await fs.remove(LOCK_FILE);
+  }
+  await fs.writeFile(LOCK_FILE, String(process.pid));
+}
+
+async function releaseLock() {
+  await fs.remove(LOCK_FILE).catch(() => {});
+}
+
+function sanitizeLog(msg) {
+  if (typeof msg !== 'string') return msg;
+  // 세션 ID 및 민감 쿠키 마스킹
+  return msg.replace(/sessionid=[a-zA-Z0-9]+/g, 'sessionid=***')
+            .replace(/csrftoken=[a-zA-Z0-9]+/g, 'csrftoken=***');
+}
 
 async function loadConfig() {
   if (await fs.pathExists(CONFIG_FILE)) { return await fs.readJson(CONFIG_FILE); }
@@ -23,20 +47,23 @@ function formatDateKST(dateStr) {
     if (isNaN(d.getTime())) return dateStr;
     // UTC 기준일 경우 KST(+9)로 변환 (문자열에 Z나 T가 포함된 경우)
     if (dateStr.includes('T') || dateStr.includes('Z')) {
-        const kstDate = new Date(d.getTime() + (9 * 60 * 60 * 1000));
-        return kstDate.toISOString().replace('T', ' ').split('.')[0];
+      const kstDate = new Date(d.getTime() + (9 * 60 * 60 * 1000));
+      return kstDate.toISOString().replace('T', ' ').split('.')[0];
     }
     return dateStr;
-  } catch(e) { return dateStr; }
+  } catch (e) { return dateStr; }
 }
 
 async function runSync() {
-  const config = await loadConfig();
   const startTime = Date.now();
-  const scraper = new KidsNoteScraper();
-  const downloader = new KidsNoteDownloader(config);
+  let scraper = null;
 
   try {
+    await checkLock();
+    const config = await loadConfig();
+    scraper = new KidsNoteScraper();
+    const downloader = new KidsNoteDownloader(config);
+
     await downloader.init();
     await scraper.init(true);
     const isLoggedIn = await scraper.checkLogin();
@@ -48,28 +75,31 @@ async function runSync() {
     const reportsOld = path.join(downloader.downloadBase, 'Reports');
     const reportsNew = path.join(downloader.downloadBase, '알림장');
     if (await fs.pathExists(reportsOld) && !(await fs.pathExists(reportsNew))) {
-        await fs.move(reportsOld, reportsNew);
+      await fs.move(reportsOld, reportsNew);
     }
     const albumsOld = path.join(downloader.downloadBase, 'Albums');
     const albumsNew = path.join(downloader.downloadBase, '앨범');
     if (await fs.pathExists(albumsOld) && !(await fs.pathExists(albumsNew))) {
-        await fs.move(albumsOld, albumsNew);
+      await fs.move(albumsOld, albumsNew);
     }
-    
+
     const filter = process.argv[2]; // 'all' 또는 'YYYY-MM'
     await syncCollection(scraper, downloader, 'album', info, config, filter);
     await syncCollection(scraper, downloader, 'report', info, config, filter);
-    
+
     const elapsed = fmtElapsed(Date.now() - startTime);
     notify('백업 완료', `정상적으로 백업이 완료되었습니다. (소요 시간: ${elapsed})`, 'ok');
   } catch (e) {
     const dateStr = new Date().toISOString().slice(0, 10);
     const logPath = path.join(__dirname, `../logs/error-${dateStr}.txt`);
-    const errorMsg = `[${new Date().toISOString()}] ${e.stack}\n\n`;
+    const errorMsg = sanitizeLog(`[${new Date().toISOString()}] ${e.stack}\n\n`);
     await fs.appendFile(logPath, errorMsg).catch(() => {});
-    console.error('[CRITICAL ERROR]', e.message);
-    notify('백업 실패', e.message, 'err');
-  } finally { await scraper.close(); }
+    console.error('[CRITICAL ERROR]', sanitizeLog(e.message));
+    notify('백업 실패', sanitizeLog(e.message), 'err');
+  } finally {
+    if (scraper) await scraper.close();
+    await releaseLock();
+  }
 }
 
 async function tryApi(scraper, url, info) {
@@ -79,7 +109,7 @@ async function tryApi(scraper, url, info) {
     const minParams = new URLSearchParams({ page_size: '10', cls: classId || '', tz: 'Asia/Seoul' });
     const noParams = new URLSearchParams({ page_size: '10' });
     const base = url.replace(/\/$/, '') + '/';
-    const variations = [ { u: base, p: noParams }, { u: base, p: minParams }, { u: base, p: allParams } ];
+    const variations = [{ u: base, p: noParams }, { u: base, p: minParams }, { u: base, p: allParams }];
     for (const { u, p } of variations) {
       const fullUrl = `${u}?${p.toString()}`;
       const result = await scraper.fetchApi(fullUrl);
@@ -119,11 +149,11 @@ async function syncCollection(scraper, downloader, type, info, config, filter) {
       finalParams = res.params;
       finalRes = res;
       success = true;
-      break; 
+      break;
     }
   }
   if (!success) { if (type === 'album') return; throw new Error(`API 주소 탐색 실패: ${type}`); }
-  
+
   let page = 1;
   let hasNext = true;
   let currentNum = 0;
@@ -142,7 +172,7 @@ async function syncCollection(scraper, downloader, type, info, config, filter) {
     if (!result.ok) break;
     const json = result.json;
     const items = json.results || json.activities || json.notices || json.posts || json.reports || json.albums || [];
-    
+
     if (items.length > 0) {
       for (const [idx, item] of items.entries()) {
         const created = item.created || item.date_written || item.date_at || '';
@@ -151,13 +181,13 @@ async function syncCollection(scraper, downloader, type, info, config, filter) {
 
         // 특정 월 필터링
         if (targetMonth && itemYM !== targetMonth) {
-            // 역순이므로 타겟 월보다 이전 월이 나오면 중단
-            if (itemYM < targetMonth) { hasNext = false; break; }
-            continue; 
+          // 역순이므로 타겟 월보다 이전 월이 나오면 중단
+          if (itemYM < targetMonth) { hasNext = false; break; }
+          continue;
         } else if (!syncAll && !targetMonth && itemYM && itemYM < currentMonth) {
-            // 이번 달 모드일 때 이전 달이 나오면 중단
-            hasNext = false;
-            break;
+          // 이번 달 모드일 때 이전 달이 나오면 중단
+          hasNext = false;
+          break;
         }
 
         const itemId = item.id;
@@ -170,7 +200,7 @@ async function syncCollection(scraper, downloader, type, info, config, filter) {
         // ID 기반 기존 폴더 검색 및 이름 동기화
         const existingPath = await downloader.findFolderById(baseDir, itemId);
         if (existingPath && existingPath !== targetDir) {
-            await downloader.renameFolder(existingPath, targetDir);
+          await downloader.renameFolder(existingPath, targetDir);
         }
 
         const images = item.attached_images || (item.image ? [item.image] : []) || [];
@@ -181,15 +211,15 @@ async function syncCollection(scraper, downloader, type, info, config, filter) {
 
         const syncLog = await downloader.getSyncLog(ym);
         const localEntry = syncLog[itemId];
-        
+
         // 스마트 업데이트: 모든 데이터가 일치하고 '물리적 폴더'가 존재할 때만 스킵
-        if (localEntry && 
-            localEntry.fileCount === serverCount && 
-            localEntry.commentCount === commentCount && 
-            localEntry.contentSize === contentSize &&
-            await fs.pathExists(targetDir)) {
-            currentNum++;
-            continue;
+        if (localEntry &&
+          localEntry.fileCount === serverCount &&
+          localEntry.commentCount === commentCount &&
+          localEntry.contentSize === contentSize &&
+          await fs.pathExists(targetDir)) {
+          currentNum++;
+          continue;
         }
 
         currentNum++;
@@ -231,22 +261,22 @@ async function processItem(downloader, item, type, targetDir, serverCount, itemH
 
     // 1. API 응답 실시간 감시
     detailPage.on('response', async res => {
-        const u = res.url();
-        if (u.includes('api')) {
-            try {
-                const json = await res.json().catch(() => null);
-                if (!json) return;
-                const list = json.comments || json.comment_list || json.replies || json.results || json.items || (Array.isArray(json) ? json : null);
-                if (Array.isArray(list) && list.length > 0) {
-                    const first = list[0];
-                    if (first && (first.content || first.body || first.author || first.author_name)) {
-                        discoveredComments.push(...list);
-                    }
-                }
-            } catch (e) {}
-        }
+      const u = res.url();
+      if (u.includes('api')) {
+        try {
+          const json = await res.json().catch(() => null);
+          if (!json) return;
+          const list = json.comments || json.comment_list || json.replies || json.results || json.items || (Array.isArray(json) ? json : null);
+          if (Array.isArray(list) && list.length > 0) {
+            const first = list[0];
+            if (first && (first.content || first.body || first.author || first.author_name)) {
+              discoveredComments.push(...list);
+            }
+          }
+        } catch (e) { }
+      }
     });
-    
+
     // 2. 페이지 방문 및 충분한 대기
     const serviceUrl = type === 'album' ? `https://www.kidsnote.com/service/album/${itemId}/` : `https://www.kidsnote.com/service/report/${itemId}/`;
     await detailPage.goto(serviceUrl, { waitUntil: 'load' }); // load 완료 후 대기
@@ -254,31 +284,31 @@ async function processItem(downloader, item, type, targetDir, serverCount, itemH
 
     // 3. 지능형 DOM 스크래핑 (API에서 못 찾은 경우 대비)
     if (discoveredComments.length === 0) {
-        const domComments = await detailPage.evaluate(() => {
-            const results = [];
-            const candidates = document.querySelectorAll('div, li, section');
-            candidates.forEach(el => {
-                const text = el.innerText || '';
-                if (text.length > 5 && text.length < 1000) {
-                    const hasAuthor = el.querySelector('.name, .author, .nickname, b, strong');
-                    const hasDate = el.querySelector('.date, .time, .created-at, span');
-                    const hasContent = el.querySelector('p, .content, .text, .body');
-                    if (hasAuthor && hasDate && hasContent) {
-                        results.push({
-                            author_name: hasAuthor.innerText.trim(),
-                            created: hasDate.innerText.trim(),
-                            content: hasContent.innerText.trim()
-                        });
-                    }
-                }
-            });
-            return results.filter((item, index, self) => 
-                index === self.findIndex((t) => t.content === item.content)
-            );
+      const domComments = await detailPage.evaluate(() => {
+        const results = [];
+        const candidates = document.querySelectorAll('div, li, section');
+        candidates.forEach(el => {
+          const text = el.innerText || '';
+          if (text.length > 5 && text.length < 1000) {
+            const hasAuthor = el.querySelector('.name, .author, .nickname, b, strong');
+            const hasDate = el.querySelector('.date, .time, .created-at, span');
+            const hasContent = el.querySelector('p, .content, .text, .body');
+            if (hasAuthor && hasDate && hasContent) {
+              results.push({
+                author_name: hasAuthor.innerText.trim(),
+                created: hasDate.innerText.trim(),
+                content: hasContent.innerText.trim()
+              });
+            }
+          }
         });
-        if (domComments.length > 0) {
-            discoveredComments.push(...domComments);
-        }
+        return results.filter((item, index, self) =>
+          index === self.findIndex((t) => t.content === item.content)
+        );
+      });
+      if (domComments.length > 0) {
+        discoveredComments.push(...domComments);
+      }
     }
     await detailPage.close();
 
@@ -298,9 +328,9 @@ async function processItem(downloader, item, type, targetDir, serverCount, itemH
 
       // 댓글 정렬 (과거 -> 최신)
       uniqueComments.sort((a, b) => {
-          const da = new Date(a.created || a.date_written || 0);
-          const db = new Date(b.created || b.date_written || 0);
-          return da - db;
+        const da = new Date(a.created || a.date_written || 0);
+        const db = new Date(b.created || b.date_written || 0);
+        return da - db;
       });
 
       commentsBlock = `\n\n${'='.repeat(50)}\n[댓글 목록: ${uniqueComments.length}개]\n${'='.repeat(50)}\n`;
@@ -318,7 +348,7 @@ async function processItem(downloader, item, type, targetDir, serverCount, itemH
   }
 
   await fs.ensureDir(targetDir);
-  
+
   // 본문 헤더 구성
   const authorName = item.author?.name || item.author_name || '작성자';
   const postDate = formatDateKST(item.created || item.date_written || '');

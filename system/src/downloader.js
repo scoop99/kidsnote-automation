@@ -71,16 +71,25 @@ class KidsNoteDownloader {
   }
 
   async downloadFile(url, targetPath) {
+    const tmpPath = `${targetPath}.tmp`;
     try {
       await fs.ensureDir(path.dirname(targetPath));
       const response = await axios({ method: 'get', url: url, responseType: 'stream', timeout: 30000 });
-      const writer = fs.createWriteStream(targetPath);
+      const writer = fs.createWriteStream(tmpPath);
       response.data.pipe(writer);
-      return new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         writer.on('finish', resolve);
         writer.on('error', reject);
       });
-    } catch (e) { throw e; }
+      // 다운로드 완료 후 이름 변경
+      await fs.move(tmpPath, targetPath, { overwrite: true });
+    } catch (e) {
+      // 실패 시 임시 파일 삭제
+      if (await fs.pathExists(tmpPath)) {
+        await fs.remove(tmpPath).catch(() => {});
+      }
+      throw e;
+    }
   }
 
   async backupOldFolder(dir) {

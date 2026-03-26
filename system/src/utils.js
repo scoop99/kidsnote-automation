@@ -8,7 +8,7 @@ const path = require('path');
  * Make a filesystem-safe segment across platforms.
  * Ported from extension's sw.js
  */
-function sanitizeSegment(s, maxLen = 80) {
+function sanitizeSegment(s, maxLen = 50) {
   let out = (s || '')
     .replace(/[\\/:*?"<>|]/g, '_')
     .replace(/[\u0000-\u001F\u007F]/g, '')
