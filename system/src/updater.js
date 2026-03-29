@@ -16,7 +16,16 @@ async function checkAndUpdate() {
   try {
     // 1. 설정 및 패키지 정보 로드
     const pkg = await fs.readJson(PKG_PATH);
-    const config = await fs.readJson(CONFIG_PATH).catch(() => ({}));
+    let config = await fs.readJson(CONFIG_PATH).catch(() => null);
+
+    if (!config) {
+      console.log('[SETUP] 기본 설정 파일(config.json)을 생성합니다.');
+      config = {
+        github_repo: 'scoop99/kidsnote-automation',
+        download_path: 'downloads'
+      };
+      await fs.writeJson(CONFIG_PATH, config, { spaces: 2 });
+    }
 
     const currentVersion = pkg.version || '0.0.0';
     const repo = config.github_repo;
