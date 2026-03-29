@@ -1,20 +1,20 @@
-# KidsNote Automation Master Menu (UTF-8 with BOM)
+﻿# KidsNote Automation Master Menu (UTF-8 with BOM)
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 function Show-Menu {
     Clear-Host
     Write-Host ""
     Write-Host "======================================================" -ForegroundColor Cyan
-    Write-Host "          키즈노트 자동 백업 관리 도구" -ForegroundColor White -BackgroundColor Blue
+    Write-Host "          ?ㅼ쫰?명듃 ?먮룞 諛깆뾽 愿由??꾧뎄" -ForegroundColor White -BackgroundColor Blue
     Write-Host "======================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "1. 프로그램 설치 (초기 1회)"
-    Write-Host "2. 즉시 백업 시작 (이번 달 또는 특정 월)"
-    Write-Host "3. 백업 시간 예약 (매일 자동)"
-    Write-Host "4. 자동 백업 예약 해제"
-    Write-Host "5. 사용법 및 도움말 보기 (MANUAL.md)"
-    Write-Host "6. 저장 경로 변경 (기본: downloads)"
-    Write-Host "Q. 종료"
+    Write-Host "1. ?꾨줈洹몃옩 ?ㅼ튂 (珥덇린 1??"
+    Write-Host "2. 利됱떆 諛깆뾽 ?쒖옉 (?대쾲 ???먮뒗 ?뱀젙 ??"
+    Write-Host "3. 諛깆뾽 ?쒓컙 ?덉빟 (留ㅼ씪 ?먮룞)"
+    Write-Host "4. ?먮룞 諛깆뾽 ?덉빟 ?댁젣"
+    Write-Host "5. ?ъ슜踰?諛??꾩?留?蹂닿린 (MANUAL.md)"
+    Write-Host "6. ???寃쎈줈 蹂寃?(湲곕낯: downloads)"
+    Write-Host "Q. 醫낅즺"
     Write-Host ""
     Write-Host "======================================================" -ForegroundColor Cyan
 }
@@ -27,13 +27,13 @@ function Run-StartBat {
 
 function Set-Schedule {
     Write-Host "------------------------------------------------"
-    $hour = Read-Host "매일 몇 시에 백업할까요? (0~23 사이의 숫자 입력)"
+    $hour = Read-Host "留ㅼ씪 紐??쒖뿉 諛깆뾽?좉퉴?? (0~23 ?ъ씠???レ옄 ?낅젰)"
     if ($hour -match '^\d+$' -and [int]$hour -ge 0 -and [int]$hour -le 23) {
         $cmd = "/c system\bat\setup_schedule.bat $hour"
         Start-Process cmd.exe -ArgumentList $cmd -Wait
     }
     else {
-        Write-Host "잘못된 입력입니다. 0~23 사이의 숫자를 입력하세요." -ForegroundColor Red
+        Write-Host "?섎せ???낅젰?낅땲?? 0~23 ?ъ씠???レ옄瑜??낅젰?섏꽭??" -ForegroundColor Red
         Start-Sleep -Seconds 2
     }
 }
@@ -42,18 +42,18 @@ function Change-DownloadPath {
     Write-Host "------------------------------------------------"
     if (Test-Path "system/config.json") {
         $config = Get-Content -Path "system/config.json" -Raw -Encoding UTF8 | ConvertFrom-Json
-        Write-Host "현재 경로: $($config.download_path)"
+        Write-Host "?꾩옱 寃쎈줈: $($config.download_path)"
         Write-Host ""
-        Write-Host "[입력 예시]" -ForegroundColor Yellow
-        Write-Host " - D:\키즈노트자료"
+        Write-Host "[?낅젰 ?덉떆]" -ForegroundColor Yellow
+        Write-Host " - D:\?ㅼ쫰?명듃?먮즺"
         Write-Host " - C:\User\Desktop\KidsNote"
         Write-Host ""
-        $newPath = Read-Host "새로운 저장 경로를 입력하세요 (엔터 시 취소)"
+        $newPath = Read-Host "?덈줈?????寃쎈줈瑜??낅젰?섏꽭??(?뷀꽣 ??痍⑥냼)"
         if ($newPath) {
             $config.download_path = $newPath
             # Force UTF8 encoding with BOM for JSON
             $config | ConvertTo-Json | Set-Content -Path "system/config.json" -Encoding UTF8
-            Write-Host "저장 경로가 변경되었습니다: $newPath" -ForegroundColor Cyan
+            Write-Host "???寃쎈줈媛 蹂寃쎈릺?덉뒿?덈떎: $newPath" -ForegroundColor Cyan
         }
     }
     Start-Sleep -Seconds 2
@@ -61,19 +61,19 @@ function Change-DownloadPath {
 
 do {
     Show-Menu
-    $choice = Read-Host "원하시는 메뉴 번호를 선택하세요"
+    $choice = Read-Host "?먰븯?쒕뒗 硫붾돱 踰덊샇瑜??좏깮?섏꽭??
     switch ($choice) {
         "1" { Run-StartBat "install" }
         "2" {
             Write-Host "------------------------------------------------"
-            Write-Host "1. 이번 달 자료만 백업 (빠름)"
-            Write-Host "2. 특정 월 자료 백업 (YYYY-MM 형식)"
-            Write-Host "3. 전체 자료 백업 (느림)"
-            $sub = Read-Host "선택"
+            Write-Host "1. ?대쾲 ???먮즺留?諛깆뾽 (鍮좊쫫)"
+            Write-Host "2. ?뱀젙 ???먮즺 諛깆뾽 (YYYY-MM ?뺤떇)"
+            Write-Host "3. ?꾩껜 ?먮즺 諛깆뾽 (?먮┝)"
+            $sub = Read-Host "?좏깮"
             switch ($sub) {
                 "1" { Run-StartBat "" }
                 "2" {
-                    $target = Read-Host "연-월 입력 (예: 2024-03)"
+                    $target = Read-Host "?????낅젰 (?? 2024-03)"
                     if ($target -match '^\d{4}-\d{2}$') { Run-StartBat $target }
                 }
                 "3" { Run-StartBat "all" }
