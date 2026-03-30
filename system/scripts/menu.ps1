@@ -1,10 +1,23 @@
-﻿# KidsNote Automation Master Menu
+# KidsNote Automation Master Menu
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 function Show-Menu {
     Clear-Host
     Write-Host "===============================" -ForegroundColor Cyan
     Write-Host " 키즈노트 자동 백업 관리 도구 " -ForegroundColor White -BackgroundColor Blue
+    Write-Host "===============================" -ForegroundColor Cyan
+
+    # #8: 마지막 백업 정보 표시
+    $lastSyncFile = "system\last_sync.json"
+    if (Test-Path $lastSyncFile) {
+        $last = Get-Content $lastSyncFile -Raw -Encoding UTF8 | ConvertFrom-Json
+        $ts = [datetime]::Parse($last.timestamp).ToString("yyyy-MM-dd HH:mm")
+        $result = if ($last.success) { "✅ 성공" } else { "❌ 실패" }
+        $stats = "신규 $($last.newItems)개, 업데이트 $($last.updatedItems)개"
+        Write-Host " 마지막 백업: $ts  $result  ($stats)" -ForegroundColor DarkCyan
+    } else {
+        Write-Host " 마지막 백업: 없음 (아직 백업을 하지 않았습니다)" -ForegroundColor DarkGray
+    }
     Write-Host "===============================" -ForegroundColor Cyan
     Write-Host "1. 프로그램 설치 (초기 1회)"
     Write-Host "2. 즉시 백업 시작"

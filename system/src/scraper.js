@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const path = require('path');
 const { notify } = require('./notifier');
 
-// system 폴더 내에 위치하게 됨
 const SESSION_FILE = path.join(__dirname, '../session.json');
 
 class KidsNoteScraper {
@@ -69,11 +68,39 @@ class KidsNoteScraper {
     return false;
   }
 
+  // #11: API 호출 후 세션 만료 여부 감지
+  async isSessionExpired() {
+    const currentUrl = this.page.url();
+    if (currentUrl.includes('/login/')) {
+      notify(
+        '다시 로그인이 필요합니다',
+        '로그인이 만료되었습니다. 프로그램을 다시 실행하고 로그인해 주세요.',
+        'warn'
+      );
+      // 만료된 세션 파일 삭제
+      await fs.remove(SESSION_FILE).catch(() => {});
+      return true;
+    }
+    return false;
+  }
+
   async performManualLogin() {
-    notify('로그인 필요', '최초 1회 수동 로그인이 필요합니다. 브라우저 창에서 로그인해 주세요.', 'warn');
+    // #4: 로그인 안내 토스트 팝업 + 콘솔 강화
+    notify(
+      '로그인이 필요합니다 (최초 1회)',
+      '잠시 후 브라우저가 열립니다. 키즈노트 아이디/비밀번호로 로그인하신 후 기다려 주세요.',
+      'warn'
+    );
+
     await this.close();
-    await this.init(false);
-    console.log('\n[AUTH] 브라우저 창이 열렸습니다. 키즈노트 로그인을 완료해 주세요...');
+    await this.init(false); // 화면에 보이는 브라우저로 재시작
+
+    console.log('\n' + '='.repeat(55));
+    console.log('  ⚠️  브라우저가 열렸습니다!');
+    console.log('  키즈노트에 아이디/비밀번호로 로그인해 주세요.');
+    console.log('  로그인이 완료되면 이 창은 자동으로 닫힙니다.');
+    console.log('='.repeat(55) + '\n');
+
     await this.page.goto('https://www.kidsnote.com/login/');
     let loginDetected = false;
     while (!loginDetected) {
@@ -86,10 +113,19 @@ class KidsNoteScraper {
         await this.page.waitForTimeout(1000);
       }
     }
+
+    console.log('\n[AUTH] 로그인 확인! 세션을 저장하고 백그라운드로 전환합니다...');
     await this.page.waitForTimeout(3000);
     const state = await this.context.storageState();
     await fs.writeJson(SESSION_FILE, state, { spaces: 2 });
+
+    // #1: 로그인 완료 후 브라우저 닫고 headless로 재시작
+    await this.close();
+    await this.init(true);
     this.isLoggedIn = true;
+
+    notify('로그인 완료!', '백그라운드에서 자료 다운로드를 시작합니다.', 'ok');
+    console.log('[AUTH] 브라우저를 백그라운드로 전환했습니다. 다운로드를 시작합니다.\n');
   }
 
   async getChildInfo() {

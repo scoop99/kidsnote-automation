@@ -1,4 +1,4 @@
-﻿# KidsNote Automation Launcher
+# KidsNote Automation Launcher
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location "$ScriptDir\..\.."
@@ -9,9 +9,15 @@ Write-Host "============================" -ForegroundColor Cyan
 
 # Node.js 확인
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host "[SETUP] Node.js 설치가 필요합니다..." -ForegroundColor Yellow
+    Write-Host "[SETUP] Node.js 설치가 필요합니다. 자동 설치를 시작합니다..." -ForegroundColor Yellow
     winget install OpenJS.NodeJS.LTS --silent --accept-source-agreements --accept-package-agreements
-    Read-Host "설치 후 창을 닫고 다시 실행하세요."
+    Write-Host ""
+    Write-Host "======================================================" -ForegroundColor Yellow
+    Write-Host "  설치가 완료되었습니다!" -ForegroundColor Green
+    Write-Host "  이 창을 닫고, 다시 더블클릭해서 실행해 주세요." -ForegroundColor White
+    Write-Host "======================================================" -ForegroundColor Yellow
+    Write-Host ""
+    Read-Host "엔터를 누르면 창이 닫힙니다."
     exit 0
 }
 
