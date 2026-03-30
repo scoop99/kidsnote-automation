@@ -1,4 +1,4 @@
-# KidsNote Automation Launcher
+﻿# KidsNote Automation Launcher
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location "$ScriptDir\..\.."

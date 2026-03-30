@@ -1,0 +1,243 @@
+{
+  "cookies": [
+    {
+      "name": "__T_",
+      "value": "1",
+      "domain": ".www.kidsnote.com",
+      "path": "/service/album",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__T_SECURE",
+      "value": "1",
+      "domain": ".www.kidsnote.com",
+      "path": "/service/album",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_gcl_au",
+      "value": "1.1.727107462.1774245972",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1782021972,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__T_",
+      "value": "1",
+      "domain": ".www.kidsnote.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__T_SECURE",
+      "value": "1",
+      "domain": ".www.kidsnote.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_kn_visitorId",
+      "value": "c4138ea9da1d332c839796786ea53e5d",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1805781971.847891,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.795747676.1774245972",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1808806552.154074,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "TUID",
+      "value": "w-e1pItmsuX9kg_260323151314037",
+      "domain": ".tiara.kidsnote.com",
+      "path": "/",
+      "expires": 1808806551.887397,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "TSID",
+      "value": "w-e1pItmsuX9kg_260323151314037",
+      "domain": ".tiara.kidsnote.com",
+      "path": "/",
+      "expires": 1774248351.887514,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "UUID",
+      "value": "Uhn7oba-MZf5c1BtGmalc3bUfyyezSPIZBFxu9Ac1kvJ8K7FjkovkQ00",
+      "domain": ".tiara.kidsnote.com",
+      "path": "/",
+      "expires": 1808806551.887542,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_SUID",
+      "value": "w-4kbf6bfGM9Jr_260323251610816",
+      "domain": ".tiara.kidsnote.com",
+      "path": "/",
+      "expires": 1774248351.887566,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ISUID",
+      "value": "w-Chkz6jZhuZxy_260323611600300",
+      "domain": ".tiara.kidsnote.com",
+      "path": "/",
+      "expires": 1774248351.887592,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "sessionid",
+      "value": "u0r15nfkjkj0vvag8tkhd5it3ljm50ql",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "current_user",
+      "value": "whitebona",
+      "domain": "www.kidsnote.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_T_ANO",
+      "value": "V+KVbNt+wxkN/+vbujQmOkb7cdfQoJ1l/mjs4ZQf7D5oofaFTqgP3V0ZRcfMfTEvKcKEBrgaW37mFdSRPstU6ejLctHr8sdMuUu2mI04w7I+Bkr3902urUQ84cXUDDcEOXVJwyeEA4/iwF8xaCwKoP8AzVklG2iQ4/kvAgesCYTsRc8HrKVTjRumBS5Ca8HXBj6K1AXJwhj4TZllEV6HAWEatNTGlQLJqjeP5Zi46RX/N/JddapAYGinG16zprRh03uzVmI75Q7jRR+NQXZOPfQW5ily6xJbhGEZ6GpCfMOjz6lL2bih/Q//fcoXzPK3EL8jYHh9NwDwQ3IOQYNZag==",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1808806551.887614,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "x-veil-id",
+      "value": "c67d8a6e-2228-437b-9cf3-0b6bbb170505",
+      "domain": ".channel.io",
+      "path": "/",
+      "expires": 1805782552.0763,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ch-veil-id",
+      "value": "c67d8a6e-2228-437b-9cf3-0b6bbb170505",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1805782552.091598,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ch-session-127152",
+      "value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXMiLCJleHAiOjE3NzY4Mzg1NDQsImlhdCI6MTc3NDI0NjU0NCwia2V5IjoiMTI3MTUyLTY5YmRlMTgzMjU0OTYxNWMyZTY2In0.DztPzE30rAIdrt96ISQYQ3SHtL6KeqHWN3vkmb_j-e4",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1774248352.091686,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_RSB6G0H9L2",
+      "value": "GS2.1.s1774246552$o1$g0$t1774246552$j60$l0$h0",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1808806552.153774,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_6HBPNX8FC2",
+      "value": "GS2.1.s1774245971$o1$g1$t1774246552$j22$l0$h0",
+      "domain": ".kidsnote.com",
+      "path": "/",
+      "expires": 1808806552.368489,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.kidsnote.com",
+      "localStorage": [
+        {
+          "name": "Channel.notification_sound_127152",
+          "value": "\"true\""
+        },
+        {
+          "name": "Channel.last_seen_tab_id_127152",
+          "value": "\"a2304654-0f67-4803-bf90-b603d0c68dbe\""
+        },
+        {
+          "name": "Channel.last_seen_tab_id_",
+          "value": "\"a2304654-0f67-4803-bf90-b603d0c68dbe\""
+        },
+        {
+          "name": "Channel.ch-veil-id",
+          "value": "\"c67d8a6e-2228-437b-9cf3-0b6bbb170505\""
+        },
+        {
+          "name": "_gcl_ls",
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"creationTimeMs\":1774245971511},\"expires\":1782021971511}}"
+        },
+        {
+          "name": "Channel.notification_sound_",
+          "value": "\"true\""
+        },
+        {
+          "name": "Channel.plugin_info.5260b323-c265-40cf-ae16-ff3a3eca599f",
+          "value": "{\"channelId\":\"127152\"}"
+        },
+        {
+          "name": "knState",
+          "value": "[{\"id\":\"whitebona\",\"roleId\":0,\"childId\":0,\"nickState\":{\"lastNick\":null,\"isPermanent\":true},\"scheduled\":{},\"attendance\":{\"defInTime\":\"\",\"defOutTime\":\"\"}}]"
+        }
+      ]
+    }
+  ]
+}

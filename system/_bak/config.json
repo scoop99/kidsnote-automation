@@ -1,0 +1,9 @@
+{
+    "target_hour":  23,
+    "use_internal_scheduler":  true,
+    "download_path":  "downloads",
+    "child_id":  null,
+    "backup_on_mismatch":  true,
+    "log_level":  "info",
+    "github_repo": "scoop99/kidsnote-automation"
+}

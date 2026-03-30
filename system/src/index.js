@@ -201,10 +201,12 @@ async function syncCollection(scraper, downloader, type, info, config, filter, s
   const syncAll = filter === 'all' || config.sync_all === true;
   const targetMonth = (filter && filter !== 'all') ? filter : null;
   const typeName = type === 'album' ? '앨범' : '알림장';
-  const totalCount = finalRes.count || '?';
+  
+  // 전체 개수가 명확하지 않을 경우를 위한 처리
+  const isTotalValid = typeof finalRes.count === 'number' && finalRes.count > 0;
+  const totalDisplay = isTotalValid ? finalRes.count : '?';
 
-  // #5: 전체 항목 수 포함 안내
-  console.log(`\n[SYNC] ${typeName} 탐색 시작... (총 ${totalCount}개, ${targetMonth ? targetMonth + ' 자료만' : (syncAll ? '전체 백업 모드' : '이번 달 데이터만')})`);
+  console.log(`\n[SYNC] ${typeName} 탐색 시작... (대상: ${targetMonth ? targetMonth + ' 자료만' : (syncAll ? '전체 백업 모드' : '이번 달 데이터만')})`);
 
   while (hasNext) {
     const params = new URLSearchParams(finalParams);
@@ -257,7 +259,8 @@ async function syncCollection(scraper, downloader, type, info, config, filter, s
           localEntry.contentSize === contentSize &&
           await fs.pathExists(targetDir)) {
           currentNum++;
-          process.stdout.write(`\r[SYNC] ${typeName} 확인 중... [${currentNum}/${totalCount}]`);
+          const progressStr = isTotalValid ? `${currentNum}/${finalRes.count}` : `${currentNum}번째`;
+          process.stdout.write(`\r[SYNC] ${typeName} 확인 중... [${progressStr}]`);
           continue;
         }
 
@@ -267,8 +270,9 @@ async function syncCollection(scraper, downloader, type, info, config, filter, s
         else syncStats.updatedItems++;
 
         const status = isNew ? '신규 발견' : '내용 업데이트';
-        // #5: 진행률 포함 헤더
-        const itemHeader = `[SYNC] ${typeName} [${currentNum}/${totalCount}] [${itemDate}] ${status}`;
+        // 진행 표시 개선: [5/100] 또는 [5번째]
+        const progressStr = isTotalValid ? `${currentNum}/${finalRes.count}` : `${currentNum}번째`;
+        const itemHeader = `[SYNC] ${typeName} [${progressStr}] [${itemDate}] ${status}`;
         process.stdout.write(`\r${itemHeader} 준비 중...`);
         await processItem(downloader, item, type, targetDir, serverCount, itemHeader, baseUrl, scraper, totalCount, currentNum);
         process.stdout.write('\n');

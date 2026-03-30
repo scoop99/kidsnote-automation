@@ -1,4 +1,4 @@
-# KidsNote Automation Master Menu
+﻿# KidsNote Automation Master Menu
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 function Show-Menu {
