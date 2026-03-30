@@ -259,8 +259,7 @@ async function syncCollection(scraper, downloader, type, info, config, filter, s
           localEntry.contentSize === contentSize &&
           await fs.pathExists(targetDir)) {
           currentNum++;
-          const progressStr = isTotalValid ? `${currentNum}/${finalRes.count}` : `${currentNum}번째`;
-          process.stdout.write(`\r[SYNC] ${typeName} 확인 중... [${progressStr}]`);
+          process.stdout.write(`\r[SYNC] ${typeName} 확인 중...`);
           continue;
         }
 
@@ -270,11 +269,9 @@ async function syncCollection(scraper, downloader, type, info, config, filter, s
         else syncStats.updatedItems++;
 
         const status = isNew ? '신규 발견' : '내용 업데이트';
-        // 진행 표시 개선: [5/100] 또는 [5번째]
-        const progressStr = isTotalValid ? `${currentNum}/${finalRes.count}` : `${currentNum}번째`;
-        const itemHeader = `[SYNC] ${typeName} [${progressStr}] [${itemDate}] ${status}`;
+        const itemHeader = `[SYNC] ${typeName} [${itemDate}] ${status}`;
         process.stdout.write(`\r${itemHeader} 준비 중...`);
-        await processItem(downloader, item, type, targetDir, serverCount, itemHeader, baseUrl, scraper, totalCount, currentNum);
+        await processItem(downloader, item, type, targetDir, serverCount, itemHeader, baseUrl, scraper);
         process.stdout.write('\n');
       }
     }
@@ -286,7 +283,7 @@ async function syncCollection(scraper, downloader, type, info, config, filter, s
   if (currentNum > 0) process.stdout.write('\n');
 }
 
-async function processItem(downloader, item, type, targetDir, serverCount, itemHeader, baseUrl, scraper, totalCount, currentNum) {
+async function processItem(downloader, item, type, targetDir, serverCount, itemHeader, baseUrl, scraper) {
   const created = item.created || item.date_written || item.date_at || '';
   const dateStr = created.slice(0, 10) || new Date().toISOString().slice(0, 10);
   const ym = created.slice(0, 7) || 'etc';
