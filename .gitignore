@@ -27,3 +27,13 @@ ADMIN.md
 *.swp
 
 system/last_sync.json
+
+# API Dumps & Temp Files
+https__*.json
+record_dom.json
+report.html
+body_text.txt
+Run
+KAV-PLAN.md
+PLAN-*.md
+ADMIN.md
