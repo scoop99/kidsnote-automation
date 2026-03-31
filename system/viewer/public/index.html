@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="마이 알림장 뷰어 - 우리 아이의 어린이집 생활을 아름답게 감상하세요">
+  <title>📚 마이 알림장 뷰어 (KAV)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/assets/style.css">
+</head>
+<body>
+  <!-- 헤더 -->
+  <header class="app-header" id="app-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-emoji">🌸</span>
+        <div>
+          <h1 class="logo-title">마이 알림장 뷰어 (KAV)</h1>
+          <p class="logo-sub">우리 아이의 소중한 하루</p>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <button class="nav-btn active" id="nav-report" data-type="report">
+          <span class="nav-icon">📋</span>
+          <span>알림장</span>
+        </button>
+        <button class="nav-btn" id="nav-album" data-type="album">
+          <span class="nav-icon">📷</span>
+          <span>앨범</span>
+        </button>
+      </nav>
+      <div class="header-actions">
+        <div class="search-wrap">
+          <input type="text" id="search-input" placeholder="검색..." class="search-input" autocomplete="off">
+          <span class="search-icon">🔍</span>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" title="테마 전환">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 필터 바 -->
+  <div class="filter-bar" id="filter-bar">
+    <div class="filter-inner">
+      <div class="filter-chips" id="filter-chips">
+        <button class="chip active" data-filter="all">전체</button>
+        <!-- JS로 월별 chip 동적 추가 -->
+      </div>
+      <div class="filter-count">
+        <span id="total-count">0</span>개의 기록
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 컨텐츠 -->
+  <main class="main-content" id="main-content">
+    <!-- 목록 뷰 -->
+    <section class="list-view" id="list-view">
+      <div class="card-grid" id="card-grid">
+        <!-- 카드 동적 렌더링 -->
+      </div>
+      <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+        <button class="load-more-btn" id="load-more-btn">더 보기</button>
+      </div>
+      <div class="empty-state" id="empty-state" style="display:none">
+        <div class="empty-emoji">🌱</div>
+        <p>아직 백업된 자료가 없습니다.</p>
+        <small>알림장 백업 프로그램을 먼저 실행해 주세요.</small>
+      </div>
+    </section>
+  </main>
+
+  <!-- 상세 모달 -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="detail-modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modal-close" aria-label="닫기">✕</button>
+      <div class="modal-body" id="modal-body">
+        <!-- 상세 컨텐츠 동적 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 이미지 라이트박스 -->
+  <div class="lightbox-overlay" id="lightbox-overlay">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <button class="lightbox-prev" id="lightbox-prev">‹</button>
+    <button class="lightbox-next" id="lightbox-next">›</button>
+    <div class="lightbox-img-wrap">
+      <img class="lightbox-img" id="lightbox-img" src="" alt="사진 크게 보기">
+    </div>
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+  </div>
+
+  <!-- 로딩 스피너 -->
+  <div class="global-loader" id="global-loader">
+    <div class="loader-ring">
+      <div></div><div></div><div></div><div></div>
+    </div>
+    <p class="loader-text">자료를 불러오는 중...</p>
+  </div>
+
+  <script src="/public/assets/app.js"></script>
+</body>
+</html>

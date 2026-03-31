@@ -1,4 +1,4 @@
-﻿# KidsNote Automation Master Menu
+# KidsNote Automation Master Menu
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 function Show-Menu {
@@ -23,8 +23,9 @@ function Show-Menu {
     Write-Host "2. 즉시 백업 시작"
     Write-Host "3. 백업 시간 예약"
     Write-Host "4. 예약 해제"
-    Write-Host "5. 도움말 보기"
-    Write-Host "6. 경로 변경"
+    Write-Host "5. 내 알림장 보기 (KAV 뷰어)"
+    Write-Host "6. 도움말 보기"
+    Write-Host "7. 경로 변경"
     Write-Host "Q. 종료"
     Write-Host "===============================" -ForegroundColor Cyan
 }
@@ -54,8 +55,9 @@ do {
             Start-Process cmd.exe -ArgumentList "/c system\bat\setup_schedule.bat $hour" -Wait 
         }
         "4" { Start-Process cmd.exe -ArgumentList "/c system\bat\remove_schedule.bat" -Wait }
-        "5" { if (Test-Path "MANUAL.md") { Start-Process notepad.exe "MANUAL.md" } }
-        "6" { 
+        "5" { Start-Process cmd.exe -ArgumentList "/c 알림장보기.bat" -Wait }
+        "6" { if (Test-Path "README.md") { Start-Process notepad.exe "README.md" } }
+        "7" { 
             if (Test-Path "system/config.json") {
                 $config = Get-Content -Path "system/config.json" -Raw -Encoding UTF8 | ConvertFrom-Json
                 Write-Host "현재: $($config.download_path)"

@@ -40,8 +40,26 @@ function getCurrentYM() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
+/**
+ * Format date string to KST (YYYY-MM-DD HH:mm:ss)
+ */
+function formatDateKST(dateStr) {
+  if (!dateStr) return '';
+  if (dateStr.includes('오전') || dateStr.includes('오후')) return dateStr;
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    if (dateStr.includes('T') || dateStr.includes('Z')) {
+      const kstDate = new Date(d.getTime() + (9 * 60 * 60 * 1000));
+      return kstDate.toISOString().replace('T', ' ').split('.')[0];
+    }
+    return dateStr;
+  } catch (e) { return dateStr; }
+}
+
 module.exports = {
   sanitizeSegment,
   fmtElapsed,
-  getCurrentYM
+  getCurrentYM,
+  formatDateKST
 };

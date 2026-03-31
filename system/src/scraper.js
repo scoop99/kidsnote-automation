@@ -68,7 +68,6 @@ class KidsNoteScraper {
     return false;
   }
 
-  // #11: API 호출 후 세션 만료 여부 감지
   async isSessionExpired() {
     const currentUrl = this.page.url();
     if (currentUrl.includes('/login/')) {
@@ -77,7 +76,6 @@ class KidsNoteScraper {
         '로그인이 만료되었습니다. 프로그램을 다시 실행하고 로그인해 주세요.',
         'warn'
       );
-      // 만료된 세션 파일 삭제
       await fs.remove(SESSION_FILE).catch(() => {});
       return true;
     }
@@ -85,7 +83,6 @@ class KidsNoteScraper {
   }
 
   async performManualLogin() {
-    // #4: 로그인 안내 토스트 팝업 + 콘솔 강화
     notify(
       '로그인이 필요합니다 (최초 1회)',
       '잠시 후 브라우저가 열립니다. 키즈노트 아이디/비밀번호로 로그인하신 후 기다려 주세요.',
@@ -93,7 +90,7 @@ class KidsNoteScraper {
     );
 
     await this.close();
-    await this.init(false); // 화면에 보이는 브라우저로 재시작
+    await this.init(false);
 
     console.log('\n' + '='.repeat(55));
     console.log('  ⚠️  브라우저가 열렸습니다!');
@@ -119,7 +116,6 @@ class KidsNoteScraper {
     const state = await this.context.storageState();
     await fs.writeJson(SESSION_FILE, state, { spaces: 2 });
 
-    // #1: 로그인 완료 후 브라우저 닫고 headless로 재시작
     await this.close();
     await this.init(true);
     this.isLoggedIn = true;
@@ -158,6 +154,8 @@ class KidsNoteScraper {
       }
     }, url);
   }
+
+
 
   async close() { if (this.browser) await this.browser.close(); }
 }
