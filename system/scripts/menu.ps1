@@ -1,4 +1,4 @@
-# KidsNote Automation Master Menu
+﻿# 키즈노트 자동화 마스터 메뉴
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 function Show-Menu {
@@ -7,24 +7,24 @@ function Show-Menu {
     Write-Host " 키즈노트 자동 백업 관리 도구 " -ForegroundColor White -BackgroundColor Blue
     Write-Host "===============================" -ForegroundColor Cyan
 
-    # #8: 마지막 백업 정보 표시
+    # 마지막 백업 정보 표시
     $lastSyncFile = "system\last_sync.json"
     if (Test-Path $lastSyncFile) {
         $last = Get-Content $lastSyncFile -Raw -Encoding UTF8 | ConvertFrom-Json
         $ts = [datetime]::Parse($last.timestamp).ToString("yyyy-MM-dd HH:mm")
-        $result = if ($last.success) { "✅ 성공" } else { "❌ 실패" }
+        $result = if ($last.success) { "[백업성공]" } else { "[백업실패]" }
         $stats = "신규 $($last.newItems)개, 업데이트 $($last.updatedItems)개"
         Write-Host " 마지막 백업: $ts  $result  ($stats)" -ForegroundColor DarkCyan
     } else {
-        Write-Host " 마지막 백업: 없음 (아직 백업을 하지 않았습니다)" -ForegroundColor DarkGray
+        Write-Host " 마지막 백업: 정보 없음 (아직 백업을 한 적이 없습니다)" -ForegroundColor DarkGray
     }
     Write-Host "===============================" -ForegroundColor Cyan
     Write-Host "1. 프로그램 설치 (초기 1회)"
     Write-Host "2. 즉시 백업 시작"
     Write-Host "3. 백업 시간 예약"
     Write-Host "4. 예약 해제"
-    Write-Host "5. 내 알림장 보기 (KAV 뷰어)"
-    Write-Host "6. 도움말 보기"
+    Write-Host "5. 알림장 보기 (KAV 뷰어)"
+    Write-Host "6. 도움말 보기 (README)"
     Write-Host "7. 경로 변경"
     Write-Host "Q. 종료"
     Write-Host "===============================" -ForegroundColor Cyan
@@ -45,7 +45,7 @@ do {
             $sub = Read-Host "1:이번달, 2:날짜지정, 3:전체"
             if ($sub -eq "1") { Run-StartBat "" }
             elseif ($sub -eq "2") { 
-                $target = Read-Host "연-월 (예: 2024-03)"
+                $target = Read-Host "대상월(예: 2024-03)"
                 Run-StartBat $target
             }
             elseif ($sub -eq "3") { Run-StartBat "all" }
@@ -64,7 +64,7 @@ do {
                 $newPath = Read-Host "새 경로 (엔터 시 취소)"
                 if ($newPath) {
                     $config.download_path = $newPath
-                    $config | ConvertTo-Json | Set-Content -Path "system/config.json" -Encoding UTF8
+                    $config | ConvertTo-Json -Depth 10 | Set-Content -Path "system/config.json" -Encoding UTF8
                 }
             }
         }

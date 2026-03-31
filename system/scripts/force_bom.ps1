@@ -1,4 +1,4 @@
-$menuScript = @'
+﻿$menuScript = @'
 # KidsNote Automation Master Menu
 function Show-Master-Menu {
     Clear-Host

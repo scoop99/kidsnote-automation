@@ -1,4 +1,4 @@
-
+﻿
 $viewer = @'
 # KidsNote Awesome Viewer (KAV) - Launcher Script
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8

@@ -1,4 +1,4 @@
-# KidsNote Automation Task Scheduler Setup
+﻿# KidsNote Automation Task Scheduler Setup
 # This script registers the kidsnote-automation tool to run daily at a specific time.
 
 param (
