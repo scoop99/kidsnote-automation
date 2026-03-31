@@ -15,7 +15,8 @@ function Show-Menu {
         $result = if ($last.success) { "[백업성공]" } else { "[백업실패]" }
         $stats = "신규 $($last.newItems)개, 업데이트 $($last.updatedItems)개"
         Write-Host " 마지막 백업: $ts  $result  ($stats)" -ForegroundColor DarkCyan
-    } else {
+    }
+    else {
         Write-Host " 마지막 백업: 정보 없음 (아직 백업을 한 적이 없습니다)" -ForegroundColor DarkGray
     }
     Write-Host "===============================" -ForegroundColor Cyan
@@ -42,10 +43,10 @@ do {
     switch ($choice) {
         "1" { Run-StartBat "install" }
         "2" {
-            $sub = Read-Host "1:이번달, 2:날짜지정, 3:전체"
+            $sub = Read-Host "1:이번달, 2:달지정, 3:전체"
             if ($sub -eq "1") { Run-StartBat "" }
             elseif ($sub -eq "2") { 
-                $target = Read-Host "대상월(예: 2024-03)"
+                $target = Read-Host "대상월(예: 2025-03)"
                 Run-StartBat $target
             }
             elseif ($sub -eq "3") { Run-StartBat "all" }
